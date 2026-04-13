@@ -1,0 +1,383 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .wrap { padding: 1rem 0; font-family: var(--font-sans); background: #1a1a2e; min-height: 100vh; border-radius: var(--border-radius-lg); overflow: hidden; color: white; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 24px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1rem; }
+  .title-block h1 { font-size: 18px; font-weight: 500; color: white; }
+  .title-block p { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+  .badge { font-size: 12px; padding: 4px 12px; border-radius: 999px; background: transparent; color: #a78bfa; border: 1.5px solid #a78bfa; }
+  .badge.teacher { color: #fbbf24; border-color: #fbbf24; }
+  .inner { padding: 0 16px 16px; }
+  .card { background: #2a2a3d; border: 0.5px solid rgba(255,255,255,0.1); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .step-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+  .step-title { font-size: 16px; font-weight: 500; color: white; margin-bottom: 1rem; }
+  label { font-size: 14px; color: rgba(255,255,255,0.6); display: block; margin-bottom: 4px; }
+  select, textarea, input[type=text] { width: 100%; margin-bottom: 12px; box-sizing: border-box; background: #1a1a2e; color: white; border: 0.5px solid rgba(255,255,255,0.2); border-radius: var(--border-radius-md); padding: 8px 10px; font-size: 14px; font-family: var(--font-sans); }
+  select option { background: #1a1a2e; }
+  textarea { min-height: 60px; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn-row { display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; align-items: center; }
+  button { background: transparent; border: 0.5px solid rgba(255,255,255,0.3); color: white; border-radius: var(--border-radius-md); padding: 8px 16px; font-size: 14px; cursor: pointer; font-family: var(--font-sans); }
+  button:hover { background: rgba(255,255,255,0.07); }
+  .primary-btn { background: #7c3aed; border-color: #7c3aed; color: white; font-weight: 500; }
+  .primary-btn:hover { background: #6d28d9; border-color: #6d28d9; }
+  .q-card { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 8px; }
+  .q-card-num { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 4px; display: flex; gap: 6px; align-items: center; }
+  .q-card-text { font-size: 14px; color: white; margin-bottom: 4px; }
+  .q-card-meta { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .remove-btn { float: right; font-size: 12px; color: rgba(255,255,255,0.35); border: none; background: none; cursor: pointer; padding: 0; }
+  .remove-btn:hover { color: #f87171; background: none; }
+  .reveal-box { background: rgba(34,197,94,0.1); border: 0.5px solid rgba(34,197,94,0.4); border-radius: var(--border-radius-md); padding: 12px 14px; margin-top: 8px; font-size: 14px; color: #86efac; display: none; }
+  .correct-btn { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.5); color: #86efac; }
+  .correct-btn:hover { background: rgba(34,197,94,0.25); }
+  .wrong-btn { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.5); color: #fca5a5; }
+  .wrong-btn:hover { background: rgba(239,68,68,0.25); }
+  .progress-row { display: flex; gap: 4px; padding: 0 16px 12px; }
+  .pip { height: 4px; flex: 1; border-radius: 2px; background: rgba(255,255,255,0.12); }
+  .pip.correct { background: #22c55e; }
+  .pip.wrong { background: #ef4444; }
+  .pip.active { background: #a78bfa; }
+  .score-pill { font-size: 14px; color: white; background: #2d2d44; border-radius: 999px; padding: 5px 14px; }
+  .type-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+  .type-pill { padding: 5px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); font-size: 13px; cursor: pointer; background: transparent; color: rgba(255,255,255,0.5); }
+  .type-pill.active { background: transparent; color: #a78bfa; border-color: #a78bfa; }
+  .slot-indicator { display: flex; gap: 6px; padding: 0 16px 12px; flex-wrap: wrap; align-items: center; }
+  .slot { font-size: 12px; padding: 3px 10px; border-radius: var(--border-radius-md); border: 0.5px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); }
+  .slot.filled.mc { background: rgba(167,139,250,0.15); color: #c4b5fd; border-color: rgba(167,139,250,0.4); }
+  .slot.filled.sa { background: rgba(34,197,94,0.12); color: #86efac; border-color: rgba(34,197,94,0.35); }
+  .mc-option { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .mc-option input[type=text] { margin-bottom: 0; flex: 1; }
+  .mc-option label { margin-bottom: 0; white-space: nowrap; font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: rgba(255,255,255,0.55); }
+  .mc-answer-choice { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: var(--border-radius-md); border: 0.5px solid rgba(255,255,255,0.15); margin-bottom: 6px; font-size: 14px; color: white; background: rgba(255,255,255,0.04); }
+  .mc-answer-choice.reveal-correct { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.4); color: #86efac; }
+  .fmt-badge-mc { font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(167,139,250,0.15);color:#c4b5fd;border:0.5px solid rgba(167,139,250,0.4); }
+  .fmt-badge-sa { font-size:11px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.12);color:#86efac;border:0.5px solid rgba(34,197,94,0.35); }
+  .game-tag { font-size:12px;padding:3px 10px;border-radius:999px;border:0.5px solid; }
+</style>
+
+<div class="wrap">
+  <div id="phase-build">
+    <div class="header">
+      <div class="title-block">
+        <h1>Quiz the Teacher</h1>
+        <p>Add 3 multiple choice + 2 short answer questions</p>
+      </div>
+      <span class="badge">Student mode</span>
+    </div>
+
+    <div class="slot-indicator" id="slot-indicator"></div>
+
+    <div class="inner">
+      <div class="card">
+        <div class="step-label">Step 1 of 2</div>
+        <div class="step-title">Write a question for your teacher</div>
+
+        <label>Question type</label>
+        <div class="type-toggle">
+          <button class="type-pill active" id="pill-mc" onclick="setMode('mc')">Multiple choice</button>
+          <button class="type-pill" id="pill-sa" onclick="setMode('sa')">Short answer</button>
+        </div>
+
+        <label>Category</label>
+        <select id="q-type">
+          <option value="Vocabulary">Vocabulary</option>
+          <option value="Main idea">Main idea</option>
+          <option value="Text evidence">Text evidence</option>
+          <option value="Author's craft">Author's craft</option>
+          <option value="Figurative language">Figurative language</option>
+          <option value="Character/narrator">Character/narrator</option>
+          <option value="Tone">Tone</option>
+          <option value="Inference">Inference</option>
+        </select>
+
+        <label>Your question</label>
+        <textarea id="q-text" placeholder="Type your question here..."></textarea>
+
+        <div id="mc-section">
+          <label>Answer choices <span style="font-size:12px;color:rgba(255,255,255,0.35);">(mark the correct one)</span></label>
+          <div class="mc-option"><span style="font-size:13px;color:rgba(255,255,255,0.5);min-width:18px;">A.</span><input type="text" id="opt-a" placeholder="Option A"><label><input type="radio" name="correct-opt" value="0"> Correct</label></div>
+          <div class="mc-option"><span style="font-size:13px;color:rgba(255,255,255,0.5);min-width:18px;">B.</span><input type="text" id="opt-b" placeholder="Option B"><label><input type="radio" name="correct-opt" value="1"> Correct</label></div>
+          <div class="mc-option"><span style="font-size:13px;color:rgba(255,255,255,0.5);min-width:18px;">C.</span><input type="text" id="opt-c" placeholder="Option C"><label><input type="radio" name="correct-opt" value="2"> Correct</label></div>
+          <div class="mc-option"><span style="font-size:13px;color:rgba(255,255,255,0.5);min-width:18px;">D.</span><input type="text" id="opt-d" placeholder="Option D"><label><input type="radio" name="correct-opt" value="3"> Correct</label></div>
+          <label style="margin-top:4px;">Explanation (shown after answer)</label>
+          <textarea id="q-explanation" placeholder="Why is that the correct answer?"></textarea>
+        </div>
+
+        <div id="sa-section" style="display:none;">
+          <label>Correct answer / model response</label>
+          <textarea id="q-answer" placeholder="What is the correct answer and why?"></textarea>
+        </div>
+
+        <div class="row2">
+          <div><label>Difficulty</label>
+            <select id="q-diff"><option value="Easy">Easy</option><option value="Medium" selected>Medium</option><option value="Hard">Hard</option></select>
+          </div>
+          <div><label>Paragraph ref (optional)</label>
+            <input type="text" id="q-para" placeholder="e.g. paragraph 3">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary-btn" onclick="addQuestion()">Add question</button>
+          <span id="add-msg" style="font-size:13px;color:#86efac;display:none;">Added!</span>
+          <span id="add-err" style="font-size:13px;color:#fca5a5;display:none;"></span>
+        </div>
+      </div>
+
+      <div id="q-list-wrap" style="display:none;">
+        <div class="card">
+          <div class="step-label">Step 2 of 2</div>
+          <div class="step-title">Questions ready to ask the teacher</div>
+          <div id="q-list"></div>
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="start-btn" class="primary-btn" onclick="startGame()" style="display:none;">Start the quiz →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase-game" style="display:none;">
+    <div class="header">
+      <div class="title-block">
+        <h1>Teacher on the hot seat</h1>
+        <p>Read the question aloud — class decides if correct</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="badge teacher">Teacher mode</span>
+        <div class="score-pill">Score: <span id="score-disp">0</span>/<span id="total-disp">0</span></div>
+      </div>
+    </div>
+
+    <div class="progress-row" id="game-progress"></div>
+
+    <div class="inner">
+      <div class="card">
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:8px;" id="game-qnum"></div>
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;" id="game-tags"></div>
+        <div style="font-size:17px;color:white;line-height:1.5;margin-bottom:1.25rem;" id="game-qtext"></div>
+
+        <div id="mc-choices" style="display:none;margin-bottom:1rem;"></div>
+        <div id="sa-instructions" style="display:none;font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:8px;">Teacher gives a verbal response — then reveal the model answer and vote.</div>
+
+        <div class="btn-row">
+          <button id="reveal-btn" onclick="revealAnswer()">Reveal answer</button>
+        </div>
+        <div class="reveal-box" id="reveal-box"></div>
+
+        <div id="vote-row" style="display:none;margin-top:1rem;">
+          <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-bottom:8px;">Class vote — did the teacher get it right?</div>
+          <div class="btn-row">
+            <button onclick="vote(true)" class="correct-btn">Got it right</button>
+            <button onclick="vote(false)" class="wrong-btn">Got it wrong</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="phase-end" style="display:none;">
+    <div class="inner">
+      <div class="card" style="text-align:center;padding:2rem 1.25rem;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:8px;">Final teacher score</div>
+        <div style="font-size:52px;font-weight:500;color:#a78bfa;" id="end-score"></div>
+        <div style="font-size:16px;color:rgba(255,255,255,0.55);margin:0.5rem 0 1.5rem;" id="end-msg"></div>
+        <button class="primary-btn" onclick="restart()">Play again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let questions = [], current = 0, score = 0, results = [], mode = 'mc';
+const LIMITS = { mc: 3, sa: 2 };
+function mcCount() { return questions.filter(q => q.format === 'mc').length; }
+function saCount() { return questions.filter(q => q.format === 'sa').length; }
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('pill-mc').className = 'type-pill' + (m === 'mc' ? ' active' : '');
+  document.getElementById('pill-sa').className = 'type-pill' + (m === 'sa' ? ' active' : '');
+  document.getElementById('mc-section').style.display = m === 'mc' ? 'block' : 'none';
+  document.getElementById('sa-section').style.display = m === 'sa' ? 'block' : 'none';
+}
+
+function renderSlots() {
+  const wrap = document.getElementById('slot-indicator');
+  wrap.innerHTML = '';
+  const labels = [{l:'MC 1',t:'mc'},{l:'MC 2',t:'mc'},{l:'MC 3',t:'mc'},{l:'SA 1',t:'sa'},{l:'SA 2',t:'sa'}];
+  let mi = 0, si = 0;
+  const mf = mcCount(), sf = saCount();
+  labels.forEach(s => {
+    const el = document.createElement('span');
+    el.className = 'slot';
+    if (s.t === 'mc' && mi < mf) el.classList.add('filled','mc');
+    if (s.t === 'sa' && si < sf) el.classList.add('filled','sa');
+    if (s.t === 'mc') mi++; else si++;
+    el.textContent = (el.classList.contains('filled') ? '✓ ' : '') + s.l;
+    wrap.appendChild(el);
+  });
+  const info = document.createElement('span');
+  info.style.cssText = 'font-size:12px;color:rgba(255,255,255,0.35);align-self:center;';
+  info.textContent = `${mf}/3 MC · ${sf}/2 SA`;
+  wrap.appendChild(info);
+}
+
+function addQuestion() {
+  const qt = document.getElementById('q-text').value.trim();
+  const errEl = document.getElementById('add-err');
+  errEl.style.display = 'none';
+  if (!qt) { showErr('Please write a question.'); return; }
+  if (mode === 'mc') {
+    if (mcCount() >= 3) { showErr('Already have 3 multiple choice questions.'); return; }
+    const opts = ['opt-a','opt-b','opt-c','opt-d'].map(id => document.getElementById(id).value.trim());
+    const cr = document.querySelector('input[name="correct-opt"]:checked');
+    const expl = document.getElementById('q-explanation').value.trim();
+    if (opts.some(o => !o)) { showErr('Please fill in all 4 answer choices.'); return; }
+    if (!cr) { showErr('Please mark the correct answer.'); return; }
+    questions.push({ format:'mc', type:document.getElementById('q-type').value, text:qt, options:opts, correct:parseInt(cr.value), explanation:expl, diff:document.getElementById('q-diff').value, para:document.getElementById('q-para').value.trim() });
+    ['opt-a','opt-b','opt-c','opt-d'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('q-explanation').value = '';
+    document.querySelectorAll('input[name="correct-opt"]').forEach(r => r.checked = false);
+  } else {
+    if (saCount() >= 2) { showErr('Already have 2 short answer questions.'); return; }
+    const qa = document.getElementById('q-answer').value.trim();
+    if (!qa) { showErr('Please add the correct answer.'); return; }
+    questions.push({ format:'sa', type:document.getElementById('q-type').value, text:qt, answer:qa, diff:document.getElementById('q-diff').value, para:document.getElementById('q-para').value.trim() });
+    document.getElementById('q-answer').value = '';
+  }
+  document.getElementById('q-text').value = '';
+  document.getElementById('q-para').value = '';
+  renderList(); renderSlots();
+  const msg = document.getElementById('add-msg');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 1500);
+}
+
+function showErr(msg) {
+  const el = document.getElementById('add-err');
+  el.textContent = msg; el.style.display = 'inline';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function renderList() {
+  const wrap = document.getElementById('q-list-wrap');
+  const list = document.getElementById('q-list');
+  const startBtn = document.getElementById('start-btn');
+  wrap.style.display = 'block'; list.innerHTML = '';
+  questions.forEach((q, i) => {
+    const d = document.createElement('div');
+    d.className = 'q-card';
+    const badge = q.format === 'mc' ? '<span class="fmt-badge-mc">MC</span>' : '<span class="fmt-badge-sa">SA</span>';
+    d.innerHTML = `<button class="remove-btn" onclick="removeQ(${i})">remove</button>
+      <div class="q-card-num">Question ${i+1} ${badge}</div>
+      <div class="q-card-text">${q.text}</div>
+      <div class="q-card-meta">${q.type} · ${q.diff}${q.para ? ' · ' + q.para : ''}</div>`;
+    list.appendChild(d);
+  });
+  const ready = mcCount() === 3 && saCount() === 2;
+  startBtn.style.display = questions.length >= 1 ? 'inline-block' : 'none';
+  startBtn.textContent = ready ? 'Start the quiz (5/5 ready) →' : `Start the quiz (${questions.length}/5 added) →`;
+}
+
+function removeQ(i) { questions.splice(i, 1); renderList(); renderSlots(); }
+
+function startGame() {
+  current = 0; score = 0; results = [];
+  document.getElementById('phase-build').style.display = 'none';
+  document.getElementById('phase-game').style.display = 'block';
+  document.getElementById('total-disp').textContent = questions.length;
+  loadGameQ();
+}
+
+function buildGameProgress() {
+  const bar = document.getElementById('game-progress');
+  bar.innerHTML = '';
+  questions.forEach((_, i) => {
+    const pip = document.createElement('div');
+    pip.className = 'pip';
+    if (i < current) pip.classList.add(results[i] ? 'correct' : 'wrong');
+    else if (i === current) pip.classList.add('active');
+    bar.appendChild(pip);
+  });
+}
+
+function loadGameQ() {
+  const q = questions[current];
+  document.getElementById('game-qnum').textContent = `Question ${current + 1} of ${questions.length}`;
+  const tags = document.getElementById('game-tags');
+  const fmtStyle = q.format === 'mc'
+    ? 'background:rgba(167,139,250,0.15);color:#c4b5fd;border-color:rgba(167,139,250,0.4);'
+    : 'background:rgba(34,197,94,0.12);color:#86efac;border-color:rgba(34,197,94,0.35);';
+  tags.innerHTML = `<span class="game-tag" style="${fmtStyle}">${q.format === 'mc' ? 'Multiple choice' : 'Short answer'}</span>
+    <span class="game-tag" style="background:rgba(167,139,250,0.1);color:#c4b5fd;border-color:rgba(167,139,250,0.3);">${q.type}</span>
+    <span class="game-tag" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.12);">${q.diff}</span>
+    ${q.para ? `<span class="game-tag" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);border-color:rgba(255,255,255,0.12);">${q.para}</span>` : ''}`;
+  document.getElementById('game-qtext').textContent = q.text;
+  document.getElementById('reveal-box').style.display = 'none';
+  document.getElementById('reveal-box').innerHTML = '';
+  document.getElementById('vote-row').style.display = 'none';
+  document.getElementById('reveal-btn').style.display = 'inline-block';
+  document.getElementById('reveal-btn').disabled = false;
+  document.getElementById('score-disp').textContent = score;
+  const mcDiv = document.getElementById('mc-choices');
+  const saDiv = document.getElementById('sa-instructions');
+  if (q.format === 'mc') {
+    mcDiv.style.display = 'block'; saDiv.style.display = 'none'; mcDiv.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const el = document.createElement('div');
+      el.className = 'mc-answer-choice';
+      el.id = `choice-${i}`;
+      el.innerHTML = `<span style="font-weight:500;min-width:18px;color:rgba(255,255,255,0.45);">${String.fromCharCode(65+i)}.</span> ${opt}`;
+      mcDiv.appendChild(el);
+    });
+  } else {
+    mcDiv.style.display = 'none'; saDiv.style.display = 'block';
+  }
+  buildGameProgress();
+}
+
+function revealAnswer() {
+  const q = questions[current];
+  const box = document.getElementById('reveal-box');
+  document.getElementById('reveal-btn').style.display = 'none';
+  if (q.format === 'mc') {
+    document.getElementById(`choice-${q.correct}`).classList.add('reveal-correct');
+    box.innerHTML = q.explanation ? `<strong>Explanation:</strong> ${q.explanation}` : `Correct: <strong>${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}</strong>`;
+  } else {
+    box.innerHTML = `<strong>Model answer:</strong> ${q.answer}`;
+  }
+  box.style.display = 'block';
+  document.getElementById('vote-row').style.display = 'block';
+}
+
+function vote(correct) {
+  results[current] = correct;
+  if (correct) score++;
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('vote-row').style.display = 'none';
+  buildGameProgress();
+  current++;
+  if (current >= questions.length) showEnd();
+  else setTimeout(() => loadGameQ(), 400);
+}
+
+function showEnd() {
+  document.getElementById('phase-game').style.display = 'none';
+  document.getElementById('phase-end').style.display = 'block';
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('end-score').textContent = score + '/' + questions.length;
+  document.getElementById('end-msg').textContent = pct === 100 ? 'Perfect score! The teacher knows their stuff.' : pct >= 60 ? 'Strong showing! A few tricky ones got through.' : 'The students win this round! Great questions!';
+}
+
+function restart() {
+  questions = []; current = 0; score = 0; results = [];
+  document.getElementById('phase-end').style.display = 'none';
+  document.getElementById('phase-build').style.display = 'block';
+  document.getElementById('q-list-wrap').style.display = 'none';
+  document.getElementById('q-list').innerHTML = '';
+  renderSlots();
+}
+
+renderSlots();
+</script>
